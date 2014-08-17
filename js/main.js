@@ -2,8 +2,8 @@ $(function() {
 
   // cartoDB configuration
   var config = {
-    user: 'devel',
-    table: 'cultura',
+    user: 'opensas',
+    table: 'oficinas_pami',
     debug: true
   };
 
@@ -28,18 +28,18 @@ $(function() {
       return $(item).attr('data-tipo');
     });
 
-    var subTipos = _.map($('.sub_tipo_check.todo-done'), function(item) {
-      return $(item).attr('data-sub_tipo').split(',');
+    var actividades = _.map($('.actividad_check.todo-done'), function(item) {
+      return $(item).attr('data-actividad').split(',');
     });
-    subTipos = _.flatten(subTipos);
+    actividades = _.flatten(actividades);
 
     var cluster = $('li.clusterMarkers div.switch div').hasClass('switch-on');
 
     map.spin(true);
-    fetchLocations(filtro, tipos, subTipos, map.getBounds(), function(data) {
+    fetchLocations(filtro, tipos, actividades, map.getBounds(), function(data) {
       map.spin(false);
 
-      map.renderAddresses(data.rows, filtro, cluster);
+      map.renderAddresses(data.rows, filtro, actividades, cluster);
 
     }, config);
   }
@@ -47,18 +47,22 @@ $(function() {
   map.updateCluster = function() {
     var filtro = $('#search').val() || '';
     var cluster = $('li.clusterMarkers div.switch div').hasClass('switch-on');
+    var actividades = _.map($('.actividad_check.todo-done'), function(item) {
+      return $(item).attr('data-actividad').split(',');
+    });
+    actividades = _.flatten(actividades);
 
     map.spin(true);
     // allow dom to repaint,
     // see http://stackoverflow.com/a/4005365, http://stackoverflow.com/a/12022571
     window.setTimeout(function() {
-      map.renderAddresses(map.data, filtro, cluster);
+      map.renderAddresses(map.data, filtro, actividades, cluster);
       map.spin(false);
     }, 50);
   };
 
    // add a method to my map to render every address
-  map.renderAddresses = function(addresses, filtro, cluster) {
+  map.renderAddresses = function(addresses, filtro, actividades, cluster) {
     console.log('rendering ' + addresses.length + ' addresses');
 
     if (map.addresses) map.addresses.clearLayers();
@@ -85,42 +89,24 @@ $(function() {
       return matches[1] + '<span class="filtro">' + matches[2] + '</span>' + matches[3];
     };
 
+    var filtroActividades = function(value, actividades) {
+      actividades.forEach(function(actividad) {
+        value = formatFiltro(value, actividad);
+      });
+      return value;
+    };
+
     var color,
       defaultColor = 'yellow',
       colors = {
-        'Industrias Culturales': 'blue',
-        'Espacios Culturales': 'green',
-        'Festivales': 'purple',
-        'Patrimonio': 'orange',
+        'ugl': 'red',
+        'agencia': 'green'
       },
       icon,
       defaultIcon = 'tint',
       icons = {
-        'Organizaciones de la Sociedad Civil': 'building',
-        'Agencia de noticias': 'file',
-        'Editoriales de libros': 'book',
-        'Monumentos y lugares históricos': 'building',
-        'Medios sociales de comunicación': 'bullhorn',
-        'Librerías': 'book',
-        'Patrimonio de la humaniad': 'male',
-        'TV digital abierta': 'youtube-play',
-        'Bibliotecas populares': 'book',
-        'Periódicos digitales': 'comments-all',
-        'Eventos feriales artesanales': 'wrench',
-        'Bibliotecas especializadas': 'book',
-        'Periódicos impresos': 'book',
-        'Feria del libro': 'book',
-        'Casas de la Historia y la Cultura del Bicentenario': 'building',
-        'Canales de TV abierta': 'facetime-video',
-        'Radios': 'microphone',
-        'Fiestas y festivales': 'trophy',
-        'Carreras culturales': 'lightbulbe',
-        'Espacios INCAA': 'film',
-        'Espacios de exhibición patrimonial': 'building',
-        'Rutas y estancias jesuíticas': 'road',
-        'Sellos musicales': 'music',
-        'Salas teatrales': 'group',
-        'Salas de cine': 'film'
+        'ugl': 'hospital',
+        'agencia': 'user-md'
       };
 
     // optimize loop -> http://stackoverflow.com/a/1340634/47633
@@ -134,21 +120,26 @@ $(function() {
 
       // blue, green, orange, yellow, purple, and violet
       color = colors[location.tipo] || defaultColor;
-      icon = icons[location.subtipo] || defaultIcon;
+      icon = icons[location.tipo] || defaultIcon;
 
       try {
 
         var message =
-          (location.tipo ? '<b>' + location.tipo + ', ' + location.subtipo + '</b></br>' : '') +
-          (location.nombre ? '<b>' +
-          (filtro ? formatFiltro(location.nombre, filtro) : location.nombre) + '</b></br>' : '') +
-          (location.direccion ? '<b>' +
-          (filtro ? formatFiltro(location.direccion, filtro) : location.direccion) + '</b></br>' : '') +
-          (location.telefono ? location.telefono + '</br>' : '') +
-          (location.email ? '<b>' + location.email + '</b></br>' : '') +
-          (location.web ?
-          '<b><a href="' + formatUrl(location.web) + '" target="_blank">' +
-          formatUrlText(location.web) + '</a></b></br>' : '');
+          '<b>' + (location.tipo ===  'ugl' ?
+            'UGL: '     + formatFiltro(location.ugl, filtro) :
+            'Agencia: ' + formatFiltro(location.agencia, filtro)
+          ) + '</b></br>' +
+          (location.direccion ?
+            '<b>' + formatFiltro(location.direccion, filtro) + '</b></br>' : ''
+          ) +
+          (location.telefono ? '<b>Tel</b>: ' + location.telefono + '</br>' : '') +
+          (location.fax ? '<b>Fax</b>: ' + location.fax + '</br>' : '') +
+          (location.pami_escucha ? '<b>Pami escucha</b>: ' + location.pami_escucha + '</br>' : '') +
+          (location.actividades ? '<b>Actividades</b>: ' +
+            filtroActividades(location.actividades, actividades) + '</br>' : ''
+          ) +
+          (location.prestaciones_medicas ? '<b>Prestaciones</b>: ' + location.prestaciones_medicas + '</br>' : '') +
+          (location.responsable ? '<b>Responsable</b>: ' + location.responsable + '</br>' : '');
 
         var marker = L.marker([location.lat, location.lon], {
           icon: L.AwesomeMarkers.icon({
@@ -184,7 +175,7 @@ $(function() {
     renderAddresses();
   });
 
-  $('.sub_tipo_check').on('click', function(e) {
+  $('.actividad_check').on('click', function(e) {
     $(e.currentTarget).toggleClass('todo-done');
     renderAddresses();
   });
