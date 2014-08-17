@@ -1,4 +1,4 @@
-var fetchLocations = function(filter, tipos, subTipos, bounds, callback, config) {
+var fetchLocations = function(filter, tipos, actividades, bounds, callback, config) {
 
   'use strict';
 
@@ -28,7 +28,11 @@ var fetchLocations = function(filter, tipos, subTipos, bounds, callback, config)
 
   tipos = tipos || [];
 
-  var fields = 'tipo, subtipo, nombre, direccion, telefono, email, web, lat, lon';
+  var fields =
+    'tipo, provincia, ugl, agencia, direccion, cp, ' +
+    'telefono, fax, pami_escucha, ' +
+    'actividades, prestaciones_medicas, responsable, lat, lon';
+
   // var fields = 'lat, lon';
   var query = 'select ' + fields + ' from ' + config.table;
 
@@ -38,30 +42,29 @@ var fetchLocations = function(filter, tipos, subTipos, bounds, callback, config)
   if (boundQuery) conditions.push(boundQuery);
 
   if (filter) {
-    var filterQuery = 
-      "lower(nombre) like '%" + filter + "%' or " +
+    var filterQuery =
+      "lower(ugl) like '%" + filter + "%' or " +
+      "lower(agencia) like '%" + filter + "%' or " +
       "lower(direccion) like '%" + filter + "%'";
     conditions.push(filterQuery);
   };
 
-  var tiposQuery, subTiposQuery, tiposConditions = [];
+  var tiposQuery;
+  var actividadesQuery;
+  var tiposConditions = [];
+
   if (tipos.length > 0) {
     tiposQuery = "'" + tipos.join("', '") + "'";
-    tiposQuery = 'lower(tipo) in (' + tiposQuery.toLowerCase() + ')';
-    tiposConditions.push(tiposQuery);
+    tiposQuery = '( lower(tipo) in (' + tiposQuery.toLowerCase() + ') )';
+    conditions.push(tiposQuery);
   }
 
-  if (subTipos.length > 0) {
-    subTiposQuery = "'" + _.map(subTipos, function(subTipo) {
-      return subTipo.replace(/^\s+|\s+$/g, '');   // trim
-    }).join("', '") + "'";
+  if (actividades.length > 0) {
+    actividadesQuery = '( ' + _.map(actividades, function(actividad) {
+      return "lower(actividades) like '%" + actividad.toLowerCase() + "%'"
+    }).join(' or ') + " )";
 
-    subTiposQuery = 'lower(subtipo) in (' + subTiposQuery.toLowerCase() + ')';
-    tiposConditions.push(subTiposQuery);
-  }
-
-  if (tiposConditions.length > 0) {
-    conditions.push( '(' + tiposConditions.join(' or ') + ')');    
+    conditions.push(actividadesQuery);
   }
 
   if (conditions.length > 0) {
@@ -85,5 +88,3 @@ var fetchLocations = function(filter, tipos, subTipos, bounds, callback, config)
   return;
 
 };
-
-
