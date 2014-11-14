@@ -49,6 +49,8 @@ OK!!!
 
 fuente: BocasDeAtencion.csv (22.541 registros)
 
+VER coseano juan EN NOMBRE
+
 tipo : boca de atencion
 sub_tipo :
 codigo: id_prest_boca_atencion
