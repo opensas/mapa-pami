@@ -1,4 +1,4 @@
-var fetchLocations = function(filter, tipos, actividades, bounds, callback, config) {
+var fetchLocations = function(filter, subtipos, bounds, callback, config) {
 
   'use strict';
 
@@ -26,12 +26,15 @@ var fetchLocations = function(filter, tipos, actividades, bounds, callback, conf
 
   filter = (filter || '').toLowerCase();
 
-  tipos = tipos || [];
+  subtipos = subtipos || [];
 
   var fields =
-    'tipo, provincia, ugl, agencia, direccion, cp, ' +
-    'telefono, fax, pami_escucha, ' +
-    'actividades, prestaciones_medicas, responsable, lat, lon';
+    'tipo, sub_tipo, codigo, nombre, ' +
+    'provincia, ' +
+    'direccion, cp, telefono, ' +
+    //'extra1, extra2, extra3, ' +
+    'lat, lon'
+  ;
 
   // var fields = 'lat, lon';
   var query = 'select ' + fields + ' from ' + config.table;
@@ -43,28 +46,17 @@ var fetchLocations = function(filter, tipos, actividades, bounds, callback, conf
 
   if (filter) {
     var filterQuery =
-      "lower(ugl) like '%" + filter + "%' or " +
-      "lower(agencia) like '%" + filter + "%' or " +
+      "lower(nombre) like '%" + filter + "%' or " +
       "lower(direccion) like '%" + filter + "%'";
     conditions.push(filterQuery);
   };
 
-  var tiposQuery;
-  var actividadesQuery;
-  var tiposConditions = [];
+  var subtiposQuery;
 
-  if (tipos.length > 0) {
-    tiposQuery = "'" + tipos.join("', '") + "'";
-    tiposQuery = '( lower(tipo) in (' + tiposQuery.toLowerCase() + ') )';
-    conditions.push(tiposQuery);
-  }
-
-  if (actividades.length > 0) {
-    actividadesQuery = '( ' + _.map(actividades, function(actividad) {
-      return "lower(actividades) like '%" + actividad.toLowerCase() + "%'"
-    }).join(' or ') + " )";
-
-    conditions.push(actividadesQuery);
+  if (subtipos.length > 0) {
+    subtiposQuery = "'" + subtipos.join("', '") + "'";
+    subtiposQuery = '( lower(sub_tipo) in (' + subtiposQuery.toLowerCase() + ') )';
+    conditions.push(subtiposQuery);
   }
 
   if (conditions.length > 0) {

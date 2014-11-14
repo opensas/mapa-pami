@@ -2,8 +2,8 @@ $(function() {
 
   // cartoDB configuration
   var config = {
-    user: 'opensas',
-    table: 'oficinas_pami',
+    user: 'pami',
+    table: 'geo_servicios_pami',
     debug: true
   };
 
@@ -24,22 +24,17 @@ $(function() {
 
     var filtro = $('#search').val() || '';
 
-    var tipos = _.map($('.tipo_check.todo-done'), function(item) {
-      return $(item).attr('data-tipo');
+    var subtipos = _.map($('.subtipo_check.todo-done'), function(item) {
+      return $(item).attr('data-subtipo');
     });
-
-    var actividades = _.map($('.actividad_check.todo-done'), function(item) {
-      return $(item).attr('data-actividad').split(',');
-    });
-    actividades = _.flatten(actividades);
 
     var cluster = $('li.clusterMarkers div.switch div').hasClass('switch-on');
 
     map.spin(true);
-    fetchLocations(filtro, tipos, actividades, map.getBounds(), function(data) {
+    fetchLocations(filtro, subtipos, map.getBounds(), function(data) {
       map.spin(false);
 
-      map.renderAddresses(data.rows, filtro, actividades, cluster);
+      map.renderAddresses(data.rows, filtro, cluster);
 
     }, config);
   }
@@ -47,22 +42,18 @@ $(function() {
   map.updateCluster = function() {
     var filtro = $('#search').val() || '';
     var cluster = $('li.clusterMarkers div.switch div').hasClass('switch-on');
-    var actividades = _.map($('.actividad_check.todo-done'), function(item) {
-      return $(item).attr('data-actividad').split(',');
-    });
-    actividades = _.flatten(actividades);
 
     map.spin(true);
     // allow dom to repaint,
     // see http://stackoverflow.com/a/4005365, http://stackoverflow.com/a/12022571
     window.setTimeout(function() {
-      map.renderAddresses(map.data, filtro, actividades, cluster);
+      map.renderAddresses(map.data, filtro, cluster);
       map.spin(false);
     }, 50);
   };
 
    // add a method to my map to render every address
-  map.renderAddresses = function(addresses, filtro, actividades, cluster) {
+  map.renderAddresses = function(addresses, filtro, cluster) {
     console.log('rendering ' + addresses.length + ' addresses');
 
     if (map.addresses) map.addresses.clearLayers();
@@ -89,24 +80,41 @@ $(function() {
       return matches[1] + '<span class="filtro">' + matches[2] + '</span>' + matches[3];
     };
 
-    var filtroActividades = function(value, actividades) {
-      actividades.forEach(function(actividad) {
-        value = formatFiltro(value, actividad);
-      });
-      return value;
-    };
+/*
+banco de protesis =fa-bank, fa-recycle, fa-wheelchair
+ugl: hospital
+agencia: user-md
+boca de atencion: fa-plus-circle
+farmacias: fa-medkit
+centros de jubilados: fa-building, fa-group, fa-heart, fa-home,
+
+banco de protesis = icon-building
+ugl: icon-hospital
+agencia: icon-user-md
+boca de atencion: icon-plus-sign-alt
+farmacias: icon-medkit
+centros de jubilados: icon-building, icon-group, icon-heart, icon-home,
+*/
 
     var color,
       defaultColor = 'yellow',
       colors = {
-        'ugl': 'red',
-        'agencia': 'green'
+        'UGL':                  'red',
+        'Agencia':              'green',
+        'Farmacia':             'blue',
+        'Boca de atencion':     'yellow',
+        'Centro de jubilados':  'orange',
+        'Banco de protesis':    'white'
       },
       icon,
       defaultIcon = 'tint',
       icons = {
-        'ugl': 'hospital',
-        'agencia': 'user-md'
+        'UGL':                  'hospital',
+        'Agencia':              'user-md',
+        'Farmacia':             'medkit',
+        'Boca de atencion':     'plus-sign-alt',
+        'Centro de jubilados':  'group',
+        'Banco de protesis':    'building'
       };
 
     // optimize loop -> http://stackoverflow.com/a/1340634/47633
@@ -124,6 +132,7 @@ $(function() {
 
       try {
 
+/*
         var message =
           '<b>' + (location.tipo ===  'ugl' ?
             'UGL: '     + formatFiltro(location.ugl, filtro) :
@@ -140,6 +149,17 @@ $(function() {
           ) +
           (location.prestaciones_medicas ? '<b>Prestaciones</b>: ' + location.prestaciones_medicas + '</br>' : '') +
           (location.responsable ? '<b>Responsable</b>: ' + location.responsable + '</br>' : '');
+*/
+        var message =
+          '<b>' + location.sub_tipo + ': ' + location.nombre + '</b></br>' +
+          (location.direccion ?
+            '<b>' + formatFiltro(location.direccion, filtro) + '</b></br>' : ''
+          ) +
+          (location.cp ?
+            '<b>' + location.cp.toString() + '</b></br>' : ''
+          ) +
+          (location.telefono ? '<b>Tel</b>: ' + location.telefono + '</br>' : '')
+        ;
 
         var marker = L.marker([location.lat, location.lon], {
           icon: L.AwesomeMarkers.icon({
@@ -170,12 +190,7 @@ $(function() {
     }, 100);
   });
 
-  $('.tipo_check').on('click', function(e) {
-    $(e.currentTarget).toggleClass('todo-done');
-    renderAddresses();
-  });
-
-  $('.actividad_check').on('click', function(e) {
+  $('.subtipo_check').on('click', function(e) {
     $(e.currentTarget).toggleClass('todo-done');
     renderAddresses();
   });
