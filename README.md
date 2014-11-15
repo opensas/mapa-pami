@@ -33,8 +33,8 @@ http://cdb.io/1pyN1CY
 Oficinas del PAMI por fecha de creación
 http://cdb.io/YhFZIT
 
-El web service está disponible en:
-(http://pami.cartodb.com/api/v2/sql?q=select * from geo_servcios_pami limit 10)[http://opensas.cartodb.com/api/v2/sql?q=select * from geo_servcios_pami limit 10]
+El web service está disponible aquí:
+<a href='http://opensas.cartodb.com/api/v2/sql?q=select * from geo_servicios_pami limit 10'>http://opensas.cartodb.com/api/v2/sql?q=select * from geo_servicios_pami limit 10</a>
 
 Fuente de la información
 ========================
