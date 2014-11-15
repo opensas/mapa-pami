@@ -39,5 +39,5 @@ http://opensas.cartodb.com/api/v2/sql?q=select * from oficinas_pami limit 10
 Fuente de la información
 ========================
 
-La información fue obtenida del (portal de datos del PAMI)[https://it.pami.org.ar/?q=dataset].
+La información fue obtenida del [portal de datos del PAMI](https://it.pami.org.ar/?q=dataset).
 La información de las oficinas fue extraida de la (página del PAMI)[http://institucional.pami.org.ar/result.php?c=3-7] utilizando OpenRefine.
