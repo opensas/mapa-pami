@@ -97,14 +97,17 @@ centros de jubilados: icon-building, icon-group, icon-heart, icon-home,
 */
 
     var color,
-      defaultColor = 'yellow',
+      defaultColor = 'blue',
+      // https://github.com/lvoogdt/Leaflet.awesome-markers
+      // 'red', 'darkred', 'orange', 'green', 'darkgreen',
+      // 'blue', 'purple', 'darkpuple', 'cadetblue'
       colors = {
-        'UGL':                  'red',
-        'Agencia':              'green',
-        'Farmacia':             'blue',
-        'Boca de atencion':     'yellow',
+        'UGL':                  'cadetblue',
+        'Agencia':              'blue',
+        'Farmacia':             'purple',
+        'Boca de atencion':     'green',
         'Centro de jubilados':  'orange',
-        'Banco de protesis':    'white'
+        'Banco de protesis':    'cadetblue'
       },
       icon,
       defaultIcon = 'tint',
@@ -127,8 +130,8 @@ centros de jubilados: icon-building, icon-group, icon-heart, icon-home,
       location = addresses[counter];
 
       // blue, green, orange, yellow, purple, and violet
-      color = colors[location.tipo] || defaultColor;
-      icon = icons[location.tipo] || defaultIcon;
+      color = colors[location.sub_tipo] || defaultColor;
+      icon = icons[location.sub_tipo] || defaultIcon;
 
       try {
 
