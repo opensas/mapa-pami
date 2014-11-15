@@ -107,7 +107,7 @@ centros de jubilados: icon-building, icon-group, icon-heart, icon-home,
         'Farmacia':             'purple',
         'Boca de atencion':     'green',
         'Centro de jubilados':  'orange',
-        'Banco de protesis':    'cadetblue'
+        'Banco de protesis':    'darkpurple'
       },
       icon,
       defaultIcon = 'tint',
