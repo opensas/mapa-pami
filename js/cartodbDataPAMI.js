@@ -29,10 +29,10 @@ var fetchLocations = function(filter, subtipos, bounds, callback, config) {
   subtipos = subtipos || [];
 
   var fields =
-    'tipo, sub_tipo, codigo, nombre, ' +
-    'provincia, ' +
+    'tipo, sub_tipo, nombre, ' +  // codigo
+    // 'provincia, ' +
     'direccion, cp, telefono, ' +
-    //'extra1, extra2, extra3, ' +
+    'extra1, extra2, extra3, ' +
     'lat, lon'
   ;
 

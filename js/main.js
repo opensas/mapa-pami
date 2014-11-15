@@ -80,6 +80,70 @@ $(function() {
       return matches[1] + '<span class="filtro">' + matches[2] + '</span>' + matches[3];
     };
 
+    var formatMessage = function(location) {
+
+      var extras = {
+        'Banco de protesis' : {
+          'extra1': '',
+          'extra2': '',
+          'extra3': ''
+        },
+        'Boca de atencion' : {
+          'extra1': '',
+          'extra2': '',
+          'extra3': ''
+        },
+        'Centro de jubilados' : {
+          'extra1': 'Hora de atención',
+          'extra2': 'Fecha de inscripción',
+          'extra3': 'Socios'
+        },
+        'Farmacia' : {
+          'extra1': 'Seccional',
+          'extra2': '',
+          'extra3': ''
+        },
+        'Oficina' : {
+          'extra1': 'Actividades',
+          'extra2': 'Pami escucha',
+          'extra3': 'Responsable'
+        }
+      };
+
+      var prop = function(title, value) {
+        if (!value) return '';
+        return (title ? '<b>' + title + ': </b>' : '') + value + '</br>';
+      };
+
+      var propExtras = function(location) {
+        var m = '';
+        var extra;
+
+        extra = extras[location.tipo].extra1;
+        if (extra) m += prop(extra, location.extra1);
+
+        extra = extras[location.tipo].extra2;
+        if (extra) m += prop(extra, location.extra2);
+
+        extra = extras[location.tipo].extra3;
+        if (extra) m += prop(extra, location.extra3);
+
+        return m;
+      }
+
+      var direccion = location.direccion +
+        (location.cp ? ' (cp ' + location.cp + ')' : '');
+
+      var m =
+        prop(location.sub_tipo, location.nombre) +
+        prop('', formatFiltro(location.direccion, filtro)) +
+        prop('Teléfono', location.telefono) +
+        propExtras(location)
+      ;
+
+      return m;
+    }
+
 /*
 banco de protesis =fa-bank, fa-recycle, fa-wheelchair
 ugl: hospital
@@ -153,16 +217,20 @@ centros de jubilados: icon-building, icon-group, icon-heart, icon-home,
           (location.prestaciones_medicas ? '<b>Prestaciones</b>: ' + location.prestaciones_medicas + '</br>' : '') +
           (location.responsable ? '<b>Responsable</b>: ' + location.responsable + '</br>' : '');
 */
-        var message =
-          '<b>' + location.sub_tipo + ': ' + location.nombre + '</b></br>' +
-          (location.direccion ?
-            '<b>' + formatFiltro(location.direccion, filtro) + '</b></br>' : ''
-          ) +
-          (location.cp ?
-            '<b>' + location.cp.toString() + '</b></br>' : ''
-          ) +
-          (location.telefono ? '<b>Tel</b>: ' + location.telefono + '</br>' : '')
-        ;
+
+
+        // var message =
+        //   '<b>' + location.sub_tipo + ': ' + location.nombre + '</b></br>' +
+        //   (location.direccion ?
+        //     '<b>' + formatFiltro(location.direccion, filtro) + '</b></br>' : ''
+        //   ) +
+        //   (location.cp ?
+        //     '<b>' + location.cp.toString() + '</b></br>' : ''
+        //   ) +
+        //   (location.telefono ? '<b>Tel</b>: ' + location.telefono + '</br>' : '')
+        // ;
+
+        var message = formatMessage(location);
 
         var marker = L.marker([location.lat, location.lon], {
           icon: L.AwesomeMarkers.icon({
