@@ -18,6 +18,12 @@ Además visualizaciones hechas con CartoDB y cruzando la información con la inf
 Visualizaciones
 ===============
 
+Cantidad de farmacias por provincia
+http://cdb.io/1x6E6MB
+
+Cantidad de farmacias por provincia según la probación en condiciones de jubilarse
+http://cdb.io/1x6FbnC
+
 Centros de jubilados por fecha de creación
 http://cdb.io/1sRwyIi
 
