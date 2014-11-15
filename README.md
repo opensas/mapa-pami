@@ -1,7 +1,7 @@
 Pami presente
 =============
 
-Aplicación de ejemplo hecha en el (Hackaton Pami)[https://it.pami.org.ar/hackathon/]
+Aplicación de ejemplo hecha en el [Hackaton Pami](https://it.pami.org.ar/hackathon/)
 
 Mapa interactivo con la información geolocalizada de:
 
@@ -34,10 +34,10 @@ Oficinas del PAMI por fecha de creación
 http://cdb.io/YhFZIT
 
 El web service está disponible en:
-http://opensas.cartodb.com/api/v2/sql?q=select * from oficinas_pami limit 10
+(http://pami.cartodb.com/api/v2/sql?q=select * from geo_servcios_pami limit 10)[http://opensas.cartodb.com/api/v2/sql?q=select * from geo_servcios_pami limit 10]
 
 Fuente de la información
 ========================
 
 La información fue obtenida del [portal de datos del PAMI](https://it.pami.org.ar/?q=dataset).
-La información de las oficinas fue extraida de la (página del PAMI)[http://institucional.pami.org.ar/result.php?c=3-7] utilizando OpenRefine.
+La información de las oficinas fue extraida de la [página del PAMI](http://institucional.pami.org.ar/result.php?c=3-7) utilizando OpenRefine.
